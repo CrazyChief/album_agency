@@ -5,20 +5,27 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django.utils.translation import ugettext_lazy as _
 
-upload_storage = FileSystemStorage(location=settings.LANDING_UPLOAD_ROOT, base_url='/landings')
+upload_storage = FileSystemStorage(
+    location=settings.LANDING_UPLOAD_ROOT, base_url='/landings')
 
 
 class Landing(models.Model):
     title = models.CharField(max_length=200, verbose_name=_('Title'))
-    template_file = models.FileField(upload_to='',
-                                     storage=upload_storage,
-                                     verbose_name=_('Template file (HTML file)'))
-    title_page = models.CharField(max_length=250, default="", verbose_name=_('Title for page'))
+    template_file = models.FileField(
+        upload_to='',
+        storage=upload_storage,
+        verbose_name=_('Template file (HTML file)'))
+    title_page = models.CharField(
+        max_length=250, default="", verbose_name=_('Title for page'))
     slug = models.SlugField(null=True, blank=True)
-    meta_description = models.TextField(null=True, blank=True, verbose_name=_('Meta description'))
-    is_active = models.BooleanField(default=False, verbose_name=_('Is landing active?'))
-    date_added = models.DateTimeField(auto_now_add=True, verbose_name=_('Date added'))
-    date_changed = models.DateTimeField(auto_now=True, verbose_name=_('Date changed'))
+    meta_description = models.TextField(
+        null=True, blank=True, verbose_name=_('Meta description'))
+    is_active = models.BooleanField(
+        default=False, verbose_name=_('Is landing active?'))
+    date_added = models.DateTimeField(
+        auto_now_add=True, verbose_name=_('Date added'))
+    date_changed = models.DateTimeField(
+        auto_now=True, verbose_name=_('Date changed'))
 
     class Meta:
         ordering = ['-date_added']
