@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'landings',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +76,12 @@ WSGI_APPLICATION = 'album_agency.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'album_agency',
+        'USER': 'root',
+        'PASSWORD': 'NumberOne123',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -118,5 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(
+    os.path.dirname(os.path.dirname(BASE_DIR)), 'static/')
 
 LANDING_UPLOAD_ROOT = os.path.join(BASE_DIR, 'landings/templates/landings')
