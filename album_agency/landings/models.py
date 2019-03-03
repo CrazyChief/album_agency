@@ -20,10 +20,11 @@ def get_upload_path(instance, filename):
         (1, 'fonts/'),
         (2, 'js/'),
     )
+    instance.file_name = filename
     return os.path.join(
       settings.BASE_DIR, 
       'landings/static/', 
-      '%s' % UPLOAD_DIRS[instance.file_type], 
+      f'{UPLOAD_DIRS[instance.file_type][1]}', 
       filename)
 
 
@@ -35,10 +36,12 @@ class StaticFile(models.Model):
         (JS_FILE, 'JavaScript File'),
     )
 
+    file_name = models.CharField(
+        _('File name'), unique=True, max_length=100)
     static_file = models.FileField(
-        upload_to='',
-        storage=get_upload_path,
-        verbose_name=_('Static Files (.css, .js, fonts)')
+        upload_to=get_upload_path,
+        verbose_name=_('Static Files (.css, .js, fonts)'),
+        max_length=500
     )
     file_type = models.SmallIntegerField(
         _('File Type'), choices=STATIC_CHOICES)
@@ -48,6 +51,9 @@ class StaticFile(models.Model):
     class Meta:
         verbose_name = _('Static File')
         verbose_name_plural = _('Static Files')
+    
+    def __str__(self):
+        return f'Static file: {self.file_name}'
     
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
