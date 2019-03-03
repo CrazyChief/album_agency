@@ -104,6 +104,7 @@ class Landing(models.Model):
         null=True, blank=True, verbose_name=_('Meta description'))
     is_active = models.BooleanField(
         default=False, verbose_name=_('Is landing active?'))
+    images_count = models.IntegerField(_('Images count'), default=5)
     date_added = models.DateTimeField(
         auto_now_add=True, verbose_name=_('Date added'))
     date_changed = models.DateTimeField(
@@ -134,6 +135,7 @@ def upload_path(instance, filename):
     """
     return "landing/{0}".format(filename)
 
+
 class LandingImage(models.Model):
     image = models.ImageField(
         upload_to=upload_path, verbose_name=_('Cover picture'))
@@ -141,6 +143,7 @@ class LandingImage(models.Model):
         _('Alternative Image Text'), max_length=250)
     landing = models.ForeignKey(
         Landing, on_delete=models.CASCADE, verbose_name=_('Landing Page'))
+    position = models.IntegerField(_('Image position'), default=1)
     created = models.DateTimeField(auto_now_add=True)
     
     class Meta:
