@@ -60,6 +60,10 @@ class StaticFile(models.Model):
     
     def is_file_active(self):
         return self.is_active
+    
+    is_file_active.admin_order_field = "is_active"
+    is_file_active.boolean = True
+    is_file_active.short_description = _("Is file active?")
 
 
 class TemplateFile(models.Model):
