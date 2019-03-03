@@ -27,4 +27,6 @@ class TemplateFileAdmin(admin.ModelAdmin):
 
 @admin.register(StaticFile)
 class StaticFileAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'file_name', 'file_type', 'is_file_active', 'created'
+    )
