@@ -70,6 +70,8 @@ class TemplateFile(models.Model):
         upload_to='',
         storage=upload_storage,
         verbose_name=_('Template file (HTML file)'))
+    static_files = models.ManyToManyField(
+        StaticFile, verbose_name=_('Used static files'))
     is_active = models.BooleanField(
         default=False, verbose_name=_('Is template active?'))
     created = models.DateTimeField(auto_now_add=True)
@@ -157,3 +159,7 @@ def template_delete(sender, instance, **kwargs):
 @receiver(pre_delete, sender=LandingImage)
 def image_delete(sender, instance, **kwargs):
     instance.image.delete(False)
+
+@receiver(pre_delete, sender=StaticFile)
+def static_file_delete(sender, instance, **kwargs):
+    instance.static_file.delete(False) 
