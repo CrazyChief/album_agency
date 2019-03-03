@@ -1,0 +1,26 @@
+{% load staticfiles %}
+{% load google_analytics %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="{% block meta_description %}{% endblock %}" name="description">
+    <meta content="{% block meta_keywords %}{% endblock %}" name="keywords">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- CSS files -->
+    {% block extra_css %}
+    {% endblock %}
+</head>
+<body>
+    {% google_analytics %}
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- JavaScript files -->
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>
