@@ -12,10 +12,10 @@ class LandingAdmin(admin.ModelAdmin):
     inlines = [LandingImageInline]
     prepopulated_fields = {"slug": ("title_page",)}
     list_display = (
-        'title', 
-        'title_page', 
-        'is_landing_active', 
-        'date_added', 
+        'title',
+        'title_page',
+        'is_landing_active',
+        'date_added',
         'date_changed'
     )
 
@@ -25,6 +25,7 @@ class TemplateFileAdmin(admin.ModelAdmin):
     list_display = (
         'name', 'is_template_active', 'created'
     )
+    filter_horizontal = ('static_files',)
 
 
 @admin.register(StaticFile)

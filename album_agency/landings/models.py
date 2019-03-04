@@ -133,6 +133,9 @@ class TemplateFile(models.Model):
         verbose_name = _('Template File')
         verbose_name_plural = _('Template Files')
 
+    def __str__(self):
+        return f'Template File {self.name}'
+
     def is_template_active(self):
         return self.is_active
 
