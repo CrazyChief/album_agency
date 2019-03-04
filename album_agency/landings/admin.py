@@ -22,7 +22,9 @@ class LandingAdmin(admin.ModelAdmin):
 
 @admin.register(TemplateFile)
 class TemplateFileAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'name', 'is_template_active', 'created'
+    )
 
 
 @admin.register(StaticFile)
