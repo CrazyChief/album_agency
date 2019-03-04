@@ -222,7 +222,7 @@ def image_delete(sender, instance, **kwargs):
 def static_file_delete(sender, instance, **kwargs):
     if instance.file_type == 0:
         instance.static_css.delete(False)
-    elif instance.file_type == 1:
+    elif instance.file_type == 2:
         instance.static_js.delete(False)
     else:
         instance.static_font.delete(False)
