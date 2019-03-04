@@ -65,6 +65,16 @@ class StaticFile(models.Model):
     is_file_active.boolean = True
     is_file_active.short_description = _("Is file active?")
 
+    @property
+    def make_file_path(self):
+        UPLOAD_DIRS = (
+            (0, 'css/'),
+            (1, 'fonts/'),
+            (2, 'js/'),
+        )
+        return f'landings/{UPLOAD_DIRS[self.file_type][1]}{self.file_name}'
+
+
 
 class TemplateFile(models.Model):
     name = models.CharField(
