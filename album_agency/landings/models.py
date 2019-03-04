@@ -2,9 +2,10 @@ import os
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.db import models
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, post_save
 from django.dispatch.dispatcher import receiver
 from django.utils.translation import ugettext_lazy as _
+from subprocess import call
 
 upload_storage = FileSystemStorage(
     location=settings.LANDING_UPLOAD_ROOT, base_url='/landings')
@@ -226,3 +227,15 @@ def static_file_delete(sender, instance, **kwargs):
         instance.static_js.delete(False)
     else:
         instance.static_font.delete(False)
+
+
+@receiver(post_save, sender=StaticFile)
+def collect_static(sender, instance, **kwargs):
+    call([
+        "python",
+        "album_agency/manage.py",
+        "collectstatic",
+        "-v",
+        "0",
+        "--no-input"
+    ])
