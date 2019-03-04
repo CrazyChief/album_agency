@@ -136,6 +136,10 @@ class Landing(models.Model):
     is_landing_active.boolean = True
     is_landing_active.short_description = _("Is landing active?")
 
+    @property
+    def get_template_path(self):
+        return self.template.template_file.url[1:]
+
 
 def upload_path(instance, filename):
     """
@@ -144,14 +148,12 @@ def upload_path(instance, filename):
     :param filename:
     :return:
     """
-    return "landing/{0}".format(filename)
+    return "landings/{0}".format(filename)
 
 
 class LandingImage(models.Model):
     image = models.ImageField(
         upload_to=upload_path, verbose_name=_('Cover picture'))
-    alternative_text = models.CharField(
-        _('Alternative Image Text'), max_length=250)
     landing = models.ForeignKey(
         Landing, on_delete=models.CASCADE, verbose_name=_('Landing Page'))
     position = models.IntegerField(_('Image position'), default=1)
@@ -162,7 +164,7 @@ class LandingImage(models.Model):
         verbose_name_plural = _('Landing Images')
     
     def __str__(self):
-        return f'Image {self.alternative_text} for Landing {self.landing}'
+        return f'Image for Landing {self.landing}'
 
 
 #   deleting uploaded file from file storage,
