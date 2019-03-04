@@ -12,20 +12,39 @@ upload_storage = FileSystemStorage(
 static_upload_storage = FileSystemStorage(
     location=settings.LANDING_UPLOAD_ROOT, base_url='/landings')
 
+static_upload_css = FileSystemStorage(
+            location=settings.LANDING_UPLOAD_CSS, base_url='/landings')
+static_upload_js = FileSystemStorage(
+            location=settings.LANDING_UPLOAD_JS, base_url='/landings')
+static_upload_font = FileSystemStorage(
+            location=settings.LANDING_UPLOAD_FONTS, base_url='/landings')
+
+
 def get_upload_path(instance, filename):
     """ Dynamic folder choise.
+        keep this func for migrations :D
     """
     UPLOAD_DIRS = (
         (0, 'css/'),
         (1, 'fonts/'),
         (2, 'js/'),
     )
-    instance.file_name = filename
-    return os.path.join(
-      settings.BASE_DIR, 
-      'landings/static/', 
-      f'{UPLOAD_DIRS[instance.file_type][1]}', 
+    upl = UPLOAD_DIRS[instance.file_type][1]
+    if upl == 'css/':
+        static_upload = FileSystemStorage(
+            location=settings.LANDING_UPLOAD_CSS, base_url='/landings')
+    elif upl == 'js/':
+        static_upload = FileSystemStorage(
+            location=settings.LANDING_UPLOAD_JS, base_url='/landings')
+    else:
+        static_upload = FileSystemStorage(
+            location=settings.LANDING_UPLOAD_FONTS, base_url='/landings')
+    path = os.path.join(
+      settings.BASE_DIR,
+      'landings/static/',
+      f'{UPLOAD_DIRS[instance.file_type][1]}',
       filename)
+    return path
 
 
 class StaticFile(models.Model):
@@ -37,12 +56,31 @@ class StaticFile(models.Model):
     )
 
     file_name = models.CharField(
-        _('File name'), unique=True, max_length=100, 
+        _('File name'), unique=True, max_length=100,
         help_text=_('Use same name as uploaded file'))
-    static_file = models.FileField(
-        upload_to=get_upload_path,
-        verbose_name=_('Static Files (.css, .js, fonts)'),
-        max_length=500
+    static_css = models.FileField(
+        upload_to='',
+        storage=static_upload_css,
+        verbose_name=_('Static File (.css)'),
+        max_length=500,
+        blank=True,
+        null=True
+    )
+    static_js = models.FileField(
+        upload_to='',
+        storage=static_upload_js,
+        verbose_name=_('Static File (.js)'),
+        max_length=500,
+        blank=True,
+        null=True
+    )
+    static_font = models.FileField(
+        upload_to='',
+        storage=static_upload_font,
+        verbose_name=_('Static File (fonts)'),
+        max_length=500,
+        blank=True,
+        null=True
     )
     file_type = models.SmallIntegerField(
         _('File Type'), choices=STATIC_CHOICES)
@@ -52,16 +90,16 @@ class StaticFile(models.Model):
     class Meta:
         verbose_name = _('Static File')
         verbose_name_plural = _('Static Files')
-    
+
     def __str__(self):
         return f'Static file: {self.file_name}'
-    
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-    
+
     def is_file_active(self):
         return self.is_active
-    
+
     is_file_active.admin_order_field = "is_active"
     is_file_active.boolean = True
     is_file_active.short_description = _("Is file active?")
@@ -76,10 +114,9 @@ class StaticFile(models.Model):
         return f'landings/{UPLOAD_DIRS[self.file_type][1]}{self.file_name}'
 
 
-
 class TemplateFile(models.Model):
     name = models.CharField(
-        _('Name'), max_length=250, 
+        _('Name'), max_length=250,
         help_text=_('Same object name as for uploaded file'))
     template_file = models.FileField(
         upload_to='',
@@ -94,7 +131,7 @@ class TemplateFile(models.Model):
     class Meta:
         verbose_name = _('Template File')
         verbose_name_plural = _('Template Files')
-    
+
     def is_template_active(self):
         return self.is_active
 
@@ -109,7 +146,7 @@ class Landing(models.Model):
         max_length=250, default="", verbose_name=_('Title for page'))
     slug = models.SlugField(null=True, blank=True)
     template = models.ForeignKey(
-        TemplateFile, on_delete=models.SET_NULL, null=True, blank=True, 
+        TemplateFile, on_delete=models.SET_NULL, null=True, blank=True,
         verbose_name=_('Template'))
     meta_description = models.TextField(
         null=True, blank=True, verbose_name=_('Meta description'))
@@ -158,11 +195,11 @@ class LandingImage(models.Model):
         Landing, on_delete=models.CASCADE, verbose_name=_('Landing Page'))
     position = models.IntegerField(_('Image position'), default=1)
     created = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         verbose_name = _('Landing Image')
         verbose_name_plural = _('Landing Images')
-    
+
     def __str__(self):
         return f'Image for Landing {self.landing}'
 
@@ -171,7 +208,7 @@ class LandingImage(models.Model):
 #   when model object had deleted from db.
 #   Template(.html) file in our case.
 
-@receiver(pre_delete, sender=Landing)
+@receiver(pre_delete, sender=TemplateFile)
 def template_delete(sender, instance, **kwargs):
     instance.template_file.delete(False)
 
@@ -180,6 +217,12 @@ def template_delete(sender, instance, **kwargs):
 def image_delete(sender, instance, **kwargs):
     instance.image.delete(False)
 
+
 @receiver(pre_delete, sender=StaticFile)
 def static_file_delete(sender, instance, **kwargs):
-    instance.static_file.delete(False) 
+    if instance.file_type == 0:
+        instance.static_css.delete(False)
+    elif instance.file_type == 1:
+        instance.static_js.delete(False)
+    else:
+        instance.static_font.delete(False)

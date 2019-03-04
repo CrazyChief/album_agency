@@ -119,11 +119,24 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Media files (images, videos, music, etc.)
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(
+    os.path.dirname(BASE_DIR), 'media')
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(
-    os.path.dirname(os.path.dirname(BASE_DIR)), 'static/')
+    os.path.dirname(BASE_DIR), 'static')
+# STATICFILES_DIRS = (
+#     os.path.join(
+#         os.path.dirname(BASE_DIR), 'static'),
+# )
 
 LANDING_UPLOAD_ROOT = os.path.join(BASE_DIR, 'landings/templates/landings')
+LANDING_UPLOAD_CSS = os.path.join(BASE_DIR, 'landings/static/landings/css')
+LANDING_UPLOAD_JS = os.path.join(BASE_DIR, 'landings/static/landings/js')
+LANDING_UPLOAD_FONTS = os.path.join(BASE_DIR, 'landings/static/landings/fonts')
