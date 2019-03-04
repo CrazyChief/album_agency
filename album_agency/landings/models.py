@@ -37,7 +37,8 @@ class StaticFile(models.Model):
     )
 
     file_name = models.CharField(
-        _('File name'), unique=True, max_length=100)
+        _('File name'), unique=True, max_length=100, 
+        help_text=_('Use same name as uploaded file'))
     static_file = models.FileField(
         upload_to=get_upload_path,
         verbose_name=_('Static Files (.css, .js, fonts)'),
