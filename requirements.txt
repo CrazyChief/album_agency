@@ -1,0 +1,4 @@
+Django==1.11
+Pillow==5.4.1
+django-analytical==2.5.0
+mysqlclient==1.4.2.post1
